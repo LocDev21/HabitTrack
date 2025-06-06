@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Connexion</title>
+</head>
+<body>
+    <h1>Connexion</h1>
+    
+    <form method="post">
+        {% csrf_token %}
+        <p>
+            <label>Nom d'utilisateur:</label>
+            <input type="text" name="username" required>
+        </p>
+        <p>
+            <label>Mot de passe:</label>
+            <input type="password" name="password" required>
+        </p>
+        <button type="submit">Se connecter</button>
+    </form>
+    
+    <p><a href="{% url 'inscription' %}">Pas de compte ? S'inscrire</a></p>
+</body>
+</html>
