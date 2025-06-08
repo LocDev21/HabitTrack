@@ -5,7 +5,8 @@ from django.contrib import messages
 from .forms import HabitudeForm 
 from django.contrib.auth.decorators import login_required
 from .models import Habitude, Suivi
-from datetime import date 
+from datetime import date, timedelta
+from django.utils import timezone
 
 # Create your views here.
 #-----------------------------------------Vue pour l'inscription--------------------------------------------------
@@ -68,10 +69,30 @@ def ajouter_habitude (request):
 
 #-----------------------------------------Vue pour le dashboard----------------------------------------------------
 
+
 @login_required
-def dashboard (request):
+def dashboard(request):
     habitudes = Habitude.objects.filter(utilisateur=request.user)
-    return render (request,'dashboard.html',{'habitudes':habitudes})
+    aujourd_hui = timezone.now().date()
+    sept_derniers_jours = [aujourd_hui - timedelta(days=i) for i in range(6, -1, -1)]
+
+    stats = {}
+
+    for habitude in habitudes:
+        suivis = Suivi.objects.filter(habitude=habitude, date__in=sept_derniers_jours)
+        jours_faits = {suivi.date: suivi.fait for suivi in suivis}
+        donnees = [1 if jours_faits.get(jour, False) else 0 for jour in sept_derniers_jours]
+
+        stats[habitude.id] = {
+            'titre': habitude.titre,
+            'jours': [jour.strftime('%a') for jour in sept_derniers_jours],  # ['Lun', 'Mar', ...]
+            'donnees': donnees  # [1, 0, 1, ...]
+        }
+
+    return render(request, 'dashboard.html', {
+        'habitudes': habitudes,
+        'stats': stats
+    })
 
 #-----------------------------------------Vue pour modifier l'habitude----------------------------------------------------
 

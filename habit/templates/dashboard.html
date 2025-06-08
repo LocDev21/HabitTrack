@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Document</title>
 </head>
 <body>
@@ -11,14 +12,57 @@
     <a href="{% url 'ajouter_habitude' %}">➕ Ajouter une nouvelle habitude</a>
     {% if habitudes %}
 <ul>
+    {{ stats|json_script:"stats-data" }}
     {% for habitude in habitudes %}
-        <li>
+        <!-- <li>
             <strong>{{ habitude.titre }}</strong> — {{ habitude.frequence }}
             <a href="{% url 'modifier_habitude' habitude.id %}">✏️ Modifier</a> |
             <a href="{% url 'supprimer_habitude' habitude.id %}">🗑️ Supprimer</a> |
             <a href="{% url 'marquer_habitude' habitude.id %}">📅 Marquer comme fait</a>
+            
 
-        </li>
+        </li> -->
+        <li style="margin-bottom: 40px;">
+    <strong>{{ habitude.titre }}</strong> — {{ habitude.frequence }}
+    <a href="{% url 'modifier_habitude' habitude.id %}">✏️ Modifier</a> |
+    <a href="{% url 'supprimer_habitude' habitude.id %}">🗑️ Supprimer</a> |
+    <a href="{% url 'marquer_habitude' habitude.id %}">📅 Marquer comme fait</a>
+
+    <!-- Zone du graphique -->
+    <canvas id="chart-{{ habitude.id }}" width="400" height="200"></canvas>
+
+<script>
+    const allStats = JSON.parse(document.getElementById('stats-data').textContent);
+    const habitStats = allStats["{{ habitude.id }}"];
+
+    const ctx = document.getElementById('chart-{{ habitude.id }}').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: habitStats.jours,
+            datasets: [{
+                label: 'Suivi sur 7 jours',
+                data: habitStats.donnees,
+                backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+</li>
+
     {% endfor %}
 </ul>
     {% else %}
