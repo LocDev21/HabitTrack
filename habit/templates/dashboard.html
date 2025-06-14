@@ -1,72 +1,140 @@
-<!DOCTYPE html>
-<html lang="zxx">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends 'base.html' %}
+{% load static %} {# Utile si vous avez des fichiers statiques personnalisés dans ce template #}
+
+{% block title %}Tableau de Bord - HabitTrack{% endblock %}
+
+{% block content %}
+    <div class="row">
+        
+        <div class="col-lg-8">
+            <h2 class="mb-4">Vos habitudes</h2>
+            <div class="mb-4">
+                <a href="{% url 'ajouter_habitude' %}" class="btn btn-success btn-lg">
+                    <i class="fas fa-plus-circle me-2"></i> Ajouter une nouvelle habitude
+                </a>
+            </div>
+
+            {% if habitudes %}
+                {# Cet élément contient les données JSON pour Chart.js et les stats #}
+                <div id="stats-data" data-stats='{{ stats|json_script:"stats-data" }}'></div>
+                <div class="row">
+                    {% for habitude in habitudes %}
+                        <div class="col-md-6">
+                            <div class="card card-habit">
+                                <div class="card-header">
+                                    <span><strong>{{ habitude.titre }}</strong> <small class="text-white-50">({{ habitude.frequence }})</small></span>
+                                    <div>
+                                        <a href="{% url 'modifier_habitude' habitude.id %}" class="btn btn-sm btn-outline-light me-2" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'supprimer_habitude' habitude.id %}" class="btn btn-sm btn-outline-light" title="Supprimer">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p class="mb-3">
+                                        {% if habitude.derniere_realisation %}
+                                            Dernière réalisation : {{ habitude.derniere_realisation|date:"d M Y" }}
+                                        {% else %}
+                                            Commencez à suivre cette habitude !
+                                        {% endif %}
+                                    </p>
+                                    {# Nouvelle ligne pour les jours consécutifs #}
+                                    <p class="mb-3">
+                                        Jours consécutifs : <span class="fw-bold" id="consecutive-{{ habitude.id }}">
+                                            {# Ceci sera rempli par le JS #}
+                                        </span>
+                                    </p>
+                                    <div class="d-grid">
+                                        <a href="{% url 'marquer_habitude' habitude.id %}" class="btn btn-primary">
+                                            <i class="fas fa-check-circle me-2"></i> Marquer comme fait aujourd'hui
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <h5 class="card-title text-center mb-3">Suivi de la progression</h5>
+                                    <div class="chart-container">
+                                        <canvas id="chart-{{ habitude.id }}"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-habits-message">
+                    <p class="lead">Aucune habitude enregistrée pour le moment. Commencez par en ajouter une !</p>
+                    <a href="{% url 'ajouter_habitude' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus-circle me-2"></i> Ajouter ma première habitude
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Colonne latérale pour les statistiques globales et badges -->
+        <div class="col-lg-4">
+            <h2 class="mb-4">Statistiques globales</h2>
+            <div class="badge-card mb-4">
+                <h5 class="mb-3">Résumé de performance</h5>
+                <p>Nombre total d'habitudes : <span class="fw-bold">{{ habitudes|length }}</span></p>
+                {# Ajoutez d'autres statistiques globales ici si disponibles #}
+            </div>
+
+            <h2 class="mb-4">Mes récompenses</h2>
+            <div class="badge-card">
+                <h5 class="mb-3">Badges obtenus</h5>
+                <div class="row">
+                    {% if earned_badges %}
+                        {% for badge in earned_badges %}
+                            <div class="col-6 col-md-4 badge-item" title="{{ badge.description_badge }}">
+                                {% if badge.nom_badge == 'Débutant' %}
+                                    <i class="fas fa-seedling"></i>
+                                {% elif badge.nom_badge == 'Assidu' %}
+                                    <i class="fas fa-star-half-alt"></i>
+                                {% elif badge.nom_badge == 'Champion' %}
+                                    <i class="fas fa-trophy"></i>
+                                {% else %}
+                                    <i class="fas fa-award"></i>
+                                {% endif %}
+                                <p>{{ badge.nom_badge }}</p>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="col-12 text-center text-muted">
+                            <p>Aucun badge obtenu pour l'instant. Continuez à suivre vos habitudes pour en débloquer !</p>
+                        </div>
+                    {% endif %}
+                    <div class="col-12 text-center text-white mt-3">
+                        <small>Plus de badges à découvrir en progressant !</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    {# Inclut Chart.js via CDN (car ce script est toujours le même) #}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <title>Document</title>
-</head>
-<body>
-    <h1>Bienvenue {{request.user.username}}</h1>
-    <h2>Vos habitudes</h2>
-    <a href="{% url 'ajouter_habitude' %}">➕ Ajouter une nouvelle habitude</a>
-    {% if habitudes %}
-<ul>
-    {{ stats|json_script:"stats-data" }}
-    {% for habitude in habitudes %}
-        <!-- <li>
-            <strong>{{ habitude.titre }}</strong> — {{ habitude.frequence }}
-            <a href="{% url 'modifier_habitude' habitude.id %}">✏️ Modifier</a> |
-            <a href="{% url 'supprimer_habitude' habitude.id %}">🗑️ Supprimer</a> |
-            <a href="{% url 'marquer_habitude' habitude.id %}">📅 Marquer comme fait</a>
-            
+    {# Inclut votre script personnalisé qui utilise les données fournies par Django #}
+    <script src="{% static 'js/habit_charts.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const statsElement = document.getElementById('stats-data');
+            const allStats = statsElement ? JSON.parse(statsElement.textContent) : {};
 
-        </li> -->
-        <li style="margin-bottom: 40px;">
-    <strong>{{ habitude.titre }}</strong> — {{ habitude.frequence }}
-    <a href="{% url 'modifier_habitude' habitude.id %}">✏️ Modifier</a> |
-    <a href="{% url 'supprimer_habitude' habitude.id %}">🗑️ Supprimer</a> |
-    <a href="{% url 'marquer_habitude' habitude.id %}">📅 Marquer comme fait</a>
+            {% for habitude in habitudes %}
+                const habitStats_{{ habitude.id }} = allStats["{{ habitude.id }}"];
+                if (habitStats_{{ habitude.id }}) {
+                    createChart("{{ habitude.id }}", habitStats_{{ habitude.id }}.jours, habitStats_{{ habitude.id }}.donnees);
 
-    <!-- Zone du graphique -->
-    <canvas id="chart-{{ habitude.id }}" width="400" height="200"></canvas>
-
-<script>
-    const allStats = JSON.parse(document.getElementById('stats-data').textContent);
-    const habitStats = allStats["{{ habitude.id }}"];
-
-    const ctx = document.getElementById('chart-{{ habitude.id }}').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: habitStats.jours,
-            datasets: [{
-                label: 'Suivi sur 7 jours',
-                data: habitStats.donnees,
-                backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
+                    const consecutiveDaysSpan = document.getElementById('consecutive-{{ habitude.id }}');
+                    if (consecutiveDaysSpan) {
+                        consecutiveDaysSpan.textContent = habitStats_{{ habitude.id }}.consecutive_days;
                     }
                 }
-            }
-        }
-    });
-</script>
-
-</li>
-
-    {% endfor %}
-</ul>
-    {% else %}
-        <p>Aucune habitude enregistrée.</p>
-    {% endif %}
-</body>
-</html>
+            {% endfor %}
+        });
+    </script>
+{% endblock %}

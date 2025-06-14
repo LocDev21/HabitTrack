@@ -10,5 +10,7 @@ urlpatterns = [
     path('modifier/<int:id>/',views.modifier_habitude, name='modifier_habitude'),
     path('supprimer/<int:id>/',views.supprimer_habitude, name='supprimer_habitude'),
     path('marquer/<int:id>/', views.marquer_habitude, name='marquer_habitude'),
+    path('blog/', views.blog_view, name='blog'),
+    path('blog/<str:slug>/', views.blog_detail_view, name='blog_detail'),
 
 ]

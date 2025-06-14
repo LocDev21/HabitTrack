@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ article.titre }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .article-detail-container {
+        background-color: #ffffff;
+        padding: 3rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+    }
+    .article-detail-container h1 {
+        color: #007bff;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+        text-align: center;
+    }
+    .article-detail-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+        margin-bottom: 2rem;
+        display: block; /* Pour centrer l'image */
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .article-detail-container p {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #555;
+        margin-bottom: 1rem;
+        text-align: justify; /* Justifie le texte du contenu */
+    }
+    .btn-back-to-blog {
+        margin-top: 2rem;
+        display: block;
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="article-detail-container">
+        <h1>{{ article.titre }}</h1>
+        <img src="{% static 'images/'|add:article.image %}" alt="{{ article.titre }}" class="img-fluid">
+        <p>{{ article.contenu|linebreaksbr }}</p> {# Utilise un filtre pour les sauts de ligne #}
+
+        <a href="{% url 'blog' %}" class="btn btn-outline-primary btn-back-to-blog">
+            <i class="fas fa-arrow-left me-2"></i> Retour au blog
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'habit'
+    'habit',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -52,11 +53,15 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'configuration.urls'
 
+# HabitTrack/configuration/settings.py
+
+import os 
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR  /'templates'],
-        'APP_DIRS': True,
+        'DIRS': [os.path.join(BASE_DIR, 'habit', 'templates')], 
+        'APP_DIRS': True, 
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',

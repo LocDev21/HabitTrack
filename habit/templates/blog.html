@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Blog - HabitTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .blog-intro {
+        background-color: #ffffff;
+        padding: 3rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    .blog-intro h1 {
+        color: #007bff;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+    }
+    .blog-intro p {
+        font-size: 1.15rem;
+        line-height: 1.8;
+        color: #555;
+    }
+    .blog-card {
+        border: none;
+        border-radius: 0.75rem;
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.075);
+        transition: transform 0.2s ease-in-out;
+        height: 100%; 
+    }
+    .blog-card:hover {
+        transform: translateY(-5px);
+    }
+    .blog-card img {
+        border-top-left-radius: 0.75rem;
+        border-top-right-radius: 0.75rem;
+        width: 100%;
+        height: 200px; 
+        object-fit: cover; 
+    }
+    .blog-card .card-title {
+        color: #343a40;
+        font-weight: 600;
+    }
+    .blog-card .card-text {
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="blog-intro">
+        <h1>Bienvenue sur le Blog HabitTrack</h1>
+        <p>
+            Les habitudes sont les piliers de nos vies, façonnant notre quotidien, nos réussites et notre bien-être.
+            Comprendre leur mécanique est la clé pour opérer des transformations intentionnelles. Grâce aux avancées
+            de la neuroplasticité, nous savons que notre cerveau est constamment en train de s'adapter, nous offrant
+            une opportunité sans précédent de remodeler nos comportements. Sur HabitTrack, nous croyons au pouvoir de la
+            constance. Ce blog est votre guide pour explorer les meilleures pratiques, découvrir des stratégies éprouvées
+            et vous inspirer à cultiver les habitudes qui vous mèneront vers une vie plus riche et plus productive.
+        </p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 g-4">
+        <!-- Article 1: Le Cyclisme -->
+        <div class="col">
+            <div class="card blog-card">
+                <img src="{% static 'images/velo.jpeg' %}" class="card-img-top" alt="Cycliste sur un vélo">
+                <div class="card-body">
+                    <h5 class="card-title">Le Cyclisme : Votre Passeport pour l'Énergie et la Sérénité</h5>
+                    <p class="card-text">Découvrez comment intégrer le vélo à votre routine quotidienne peut transformer votre santé physique et mentale. Au-delà de l'exercice, c'est une habitude qui favorise la clarté d'esprit et la gestion du stress, des bienfaits que HabitTrack vous aidera à suivre pas à pas.</p>
+                    <a href="{% url 'blog_detail' slug='cyclisme-energie-serenite' %}" class="btn btn-outline-primary">Lire la suite <i class="fas fa-arrow-right ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Article 2: La Lecture -->
+        <div class="col">
+            <div class="card blog-card">
+                <img src="{% static 'images/foret3.jpeg' %}" class="card-img-top" alt="Personne lisant un livre">
+                <div class="card-body">
+                    <h5 class="card-title">Le Pouvoir des Mots : Cultiver l'Habitude de la Lecture</h5>
+                    <p class="card-text">La lecture est une habitude qui nourrit l'esprit, élargit vos horizons et stimule la créativité. Apprenez à intégrer quelques minutes de lecture chaque jour pour des bénéfices cumulatifs sur votre développement personnel. HabitTrack vous accompagne dans ce voyage littéraire.</p>
+                    <a href="{% url 'blog_detail' slug='pouvoir-mots-lecture' %}" class="btn btn-outline-primary">Lire la suite <i class="fas fa-arrow-right ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Article 3: Le Temps en Nature -->
+        <div class="col">
+            <div class="card blog-card">
+                <img src="{% static 'images/evasion.jpg' %}" class="card-img-top" alt="Forêt luxuriante">
+                <div class="card-body">
+                    <h5 class="card-title">S'Évader en Nature : L'Habitude qui Recharge l'Esprit</h5>
+                    <p class="card-text">Plonger au cœur de la nature, même pour une courte promenade, réduit le stress et améliore le bien-être général. Fais de cette connexion essentielle une habitude et observe l'impact positif sur ta productivité et ton humeur, avec le suivi simplifié de HabitTrack.</p>
+                    <a href="{% url 'blog_detail' slug='evader-nature-recharge-esprit' %}" class="btn btn-outline-primary">Lire la suite <i class="fas fa-arrow-right ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Article 4: Yoga et Méditation -->
+        <div class="col">
+            <div class="card blog-card">
+                <img src="{% static 'images/yoga2.jpeg' %}" class="card-img-top" alt="Personne faisant du yoga">
+                <div class="card-body">
+                    <h5 class="card-title">Yoga et Méditation : Ancrer la Pleine Conscience dans Votre Journée</h5>
+                    <p class="card-text">Le yoga et la méditation sont des pratiques puissantes pour équilibrer le corps et l'esprit. Instaurer ces habitudes peut améliorer votre concentration, réduire l'anxiété et renforcer votre discipline. Suivez vos progrès et restez motivé avec les outils de HabitTrack.</p>
+                    <a href="{% url 'blog_detail' slug='yoga-meditation-pleine-conscience' %}" class="btn btn-outline-primary">Lire la suite <i class="fas fa-arrow-right ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
