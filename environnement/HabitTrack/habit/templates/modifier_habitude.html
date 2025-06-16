@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Modifier une Habitude - HabitTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        background-color: #02010b;
+        padding: 3rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto; /* Centrer le conteneur */
+    }
+    h2 {
+        margin-bottom: 2rem;
+        text-align: center;
+        color: #010408;
+    }
+    form p {
+        margin-bottom: 1rem;
+    }
+    form label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #f3f7fa;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="form-container">
+        <h2>Modifier l’habitude</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            {# Applique les classes Bootstrap via form.as_p en utilisant les widgets définis dans forms.py #}
+            {{ form.as_p }}
+            <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+            </div>
+        </form>
+
+        <p class="text-center mt-3">
+            <a href="{% url 'dashboard' %}" class="btn btn-link text-decoration-none">⬅ Retour au tableau de bord</a>
+        </p>
+    </div>
+{% endblock %}
