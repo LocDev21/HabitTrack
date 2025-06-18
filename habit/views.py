@@ -2,15 +2,16 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash # Importe update_session_auth_hash
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import HabitudeForm
+from .forms import HabitudeForm, PasswordChangeCustomForm # Importe le nouveau formulaire PasswordChangeCustomForm
 from .models import Habitude, Suivi, Badge
 from datetime import date, timedelta
 from django.utils import timezone
-from django.http import Http404, JsonResponse 
-import json 
+from django.db.models import Sum, Q # Import Sum and Q for aggregate queries
+from django.http import Http404, JsonResponse
+import json
 
 # --- Authentification et gestion des utilisateurs ---
 
@@ -51,6 +52,32 @@ def deconnexion(request):
     logout(request)
     messages.info(request, "Vous avez été déconnecté.")
     return redirect('connexion')
+
+# --- Vues pour le changement de mot de passe (ajoutées ici) ---
+@login_required
+def changer_mot_de_passe(request):
+    if request.method == 'POST':
+        form = PasswordChangeCustomForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important pour maintenir l'utilisateur connecté
+            messages.success(request, 'Votre mot de passe a été mis à jour avec succès !')
+            return redirect('password_change_done') # Redirection vers la page de confirmation
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Erreur sur le champ '{field}': {error}")
+            # Afficher aussi les erreurs non liées aux champs
+            for error in form.non_field_errors():
+                messages.error(request, error)
+    else:
+        form = PasswordChangeCustomForm(request.user)
+    return render(request, 'password_change_form.html', {'form': form})
+
+@login_required
+def changer_mot_de_passe_done(request):
+    return render(request, 'password_change_done.html')
+
 
 # --- Gestion des habitudes ---
 
@@ -229,8 +256,23 @@ def dashboard(request):
     stats = {}
     today = date.today()
 
+    # --- Calculate Global Success Rate ---
+    total_expected_completions = 0
+    total_actual_completions = Suivi.objects.filter(habitude__utilisateur=request.user, fait=True).count()
+
     for habitude in habitudes:
-        # Récupérer les 7 derniers jours (du plus ancien au plus récent)
+        # Calculate expected completions based on frequency and habit creation date
+        # This is a simplified calculation. For complex frequencies (e.g., specific days of week),
+        # a more detailed logic would be needed.
+        days_since_creation = (today - habitude.date_creation).days + 1
+        
+        if habitude.frequence == 'quotidien':
+            total_expected_completions += days_since_creation
+        elif habitude.frequence == 'hebdomadaire':
+            total_expected_completions += (days_since_creation // 7) + (1 if days_since_creation % 7 > 0 else 0)
+        # Add more frequency types if needed
+
+        # --- Data for the chart (last 7 days) ---
         jours = [(today - timedelta(days=i)).isoformat() for i in range(6, -1, -1)] # Dates des 7 derniers jours (inclut aujourd'hui)
         donnees = []
         
@@ -264,6 +306,11 @@ def dashboard(request):
             'derniere_realisation': habitude.derniere_realisation.isoformat() if habitude.derniere_realisation else None,
             'aujourd_hui_fait': Suivi.objects.filter(habitude=habitude, date=today, fait=True).exists() # Ajout pour l'état de la checkbox
         }
+    
+    global_success_rate = 0
+    if total_expected_completions > 0:
+        global_success_rate = (total_actual_completions / total_expected_completions) * 100
+
 
     # Récupérer les badges de l'utilisateur
     badges = Badge.objects.filter(utilisateur=user).order_by('nom_badge') # Tri alphabétique ou par un champ 'ordre' si défini
@@ -273,6 +320,7 @@ def dashboard(request):
         'stats': stats,
         'today': today, # Passez 'today' au contexte pour l'affichage ou la logique JS
         'badges': badges,
+        'global_success_rate': round(global_success_rate, 2), # Pass the global success rate to the template
     }
     return render(request, 'dashboard.html', context)
 

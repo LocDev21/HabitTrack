@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
+
 urlpatterns = [
     path('', views.connexion, name= 'connexion'),
     path('inscription/', views.inscription, name='inscription' ),
@@ -13,4 +14,7 @@ urlpatterns = [
     path('blog/', views.blog_view, name='blog'),
     path('blog/<str:slug>/', views.blog_detail_view, name='blog_detail'),
 
+    # URLs pour le changement de mot de passe
+    path('changer-mot-de-passe/', views.changer_mot_de_passe, name='password_change'),
+    path('changer-mot-de-passe/fait/', views.changer_mot_de_passe_done, name='password_change_done'),
 ]

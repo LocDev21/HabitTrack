@@ -2,6 +2,7 @@
 
 from django import forms
 from .models import Habitude
+from django.contrib.auth.forms import PasswordChangeForm # Importe le formulaire de changement de mot de passe de Django
 
 # Formulaire pour la création et la modification d'une habitude
 class HabitudeForm(forms.ModelForm):
@@ -21,3 +22,14 @@ class HabitudeForm(forms.ModelForm):
             'description_habit': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Décrivez votre habitude en quelques mots...', 'rows': 3}), # Widget pour zone de texte
             'frequence': forms.Select(attrs={'class': 'form-select'}),
         }
+
+# Nouveau formulaire personnalisé pour le changement de mot de passe
+class PasswordChangeCustomForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Ajoute les classes Bootstrap aux champs du formulaire
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
+            # Supprime le help_text par défaut si vous ne le voulez pas
+            field.help_text = None
+

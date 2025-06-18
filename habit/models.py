@@ -14,9 +14,10 @@ class Habitude(models.Model):
     # Choix pour la fréquence de l'habitude
     FREQUENCE_CHOIX = [
         ('quotidien', 'Quotidien'),
-        ('hebdomadaire', 'Hebdomadaire')
+        ('hebdomadaire', 'Hebdomadaire'),
+        ('mensuelle', 'Mensuelle') # Ajout de l'option mensuelle
     ]
-    # Fréquence de l'habitude (choix parmi 'quotidien' ou 'hebdomadaire')
+    # Fréquence de l'habitude (choix parmi 'quotidien' ou 'hebdomadaire' ou 'mensuelle')
     frequence = models.CharField(max_length=25, choices=FREQUENCE_CHOIX)
     # Date de création de l'habitude (automatiquement définie à la création)
     date_creation = models.DateField(auto_now_add=True)
@@ -25,7 +26,6 @@ class Habitude(models.Model):
     derniere_realisation = models.DateField(null=True, blank=True)
     
     # Nouveau champ pour le suivi hebdomadaire: indique si l'habitude doit être cochée par défaut chaque semaine
-    # Utile pour les habitudes qui ne sont pas faites 'chaque jour' mais 'au moins une fois par semaine'
     # Ce champ n'est pas directement utilisé pour l'image, mais pour la modulabilité du suivi
     suivi_par_defaut = models.BooleanField(default=False, help_text="Marquer comme 'fait' automatiquement si aucune action n'est prise pour la période.")
 

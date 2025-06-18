@@ -1,4 +1,3 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -6,20 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}HabitTrack{% endblock %}</title>
     
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0V4LLanw2qksYuRlEzO+tcaEPQogQ0KaoIF2w9jF30A3h9kK/v4d2yE6/KqQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    
-    {# Votre fichier CSS personnalisé #}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" xintegrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0V4LLanw2qksYuRlEzO+tcaEPQogQ0KaoIF2w9jF30A3h9kK/v4d2yE6/KqQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            background-color: #214264; /* Couleur de fond sombre pour le corps */
+            color: #e8eef3;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .navbar-custom {
+            box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
+        }
+        .main-content {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            flex-grow: 1;
+        }
+        .footer {
+            background-color: #030304;
+            border-top: 1px solid #e9ecef;
+        }
+        .navbar-brand img {
+            height: 32px;
+            margin-right: 0.5rem;
+        }
 
-    {% block extra_css %}{% endblock %} {# Pour des styles supplémentaires spécifiques à la page #}
+        /* Styles pour les éléments de menu déroulant (dropdown-item) au survol */
+        .dropdown-menu.bg-dark .dropdown-item.text-light:hover,
+        .dropdown-menu.bg-dark .dropdown-item.text-light:focus {
+            background-color: #007bff; /* Un bleu distinct pour le survol */
+            color: #fff !important; /* Force le texte à rester blanc */
+        }
+        /* Pour les boutons directs dans la navbar si le problème de hover persiste */
+        .navbar-nav .btn-outline-success:hover,
+        .navbar-nav .btn-outline-danger:hover {
+            color: #fff !important; /* Assure un texte blanc au survol */
+            background-color: rgba(255, 255, 255, 0.2) !important; /* Un fond semi-transparent pour un effet subtil */
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!-- Barre de navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-custom sticky-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'dashboard' %}">
-                <img src="{% static 'images/logo.jpeg' %}" alt="Logo HabitTrack" height="30" class="d-inline-block align-text-top me-2">
+            <a class="navbar-brand text-white fw-bold" href="{% url 'dashboard' %}">
+                {% load static %} {# Charge le tag static pour les images #}
+                <img src="{% static 'images/logo.jpeg' %}" alt="HabitTrack Logo"> {# Ajout du logo #}
                 HabitTrack
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,30 +65,33 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" aria-current="page" href="{% url 'dashboard' %}">Tableau de Bord</a>
+                        <a class="nav-link active text-white" aria-current="page" href="{% url 'dashboard' %}">Accueil</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'ajouter_habitude' %}active{% endif %}" href="{% url 'ajouter_habitude' %}">Ajouter Habitude</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'blog' %}active{% endif %}" href="{% url 'blog' %}">Blog</a>
+                        <a class="nav-link text-white" href="{% url 'blog' %}">Blog</a>
                     </li>
                 </ul>
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <span class="navbar-text me-3 text-white-50">
-                            Bonjour, {{ user.username }}!
+                <ul class="navbar-nav">
+                    <li class="nav-item me-3">
+                        <span class="navbar-text text-white">
+                            Bienvenue, <span class="fw-bold">{{ request.user.username }}</span> !
                         </span>
                     </li>
+                    {# Nouveau lien pour changer le mot de passe #}
+                    <li class="nav-item me-2">
+                        <a href="{% url 'password_change' %}" class="btn btn-outline-success">Changer le mot de passe</a>
+                    </li>
                     <li class="nav-item">
-                        <a href="{% url 'deconnexion' %}" class="btn btn-outline-light">Déconnexion</a>
+                        <a href="{% url 'deconnexion' %}" class="btn btn-outline-danger">Déconnexion</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
+    <!-- Contenu principal des pages -->
     <div class="container-fluid main-content">
+        <!-- Bloc pour afficher les messages Django -->
         {% if messages %}
             <div class="row justify-content-center mb-4">
                 <div class="col-lg-8">
@@ -66,19 +106,19 @@
         {% endif %}
 
         {% block content %}
+        <!-- Le contenu spécifique de chaque page ira ici -->
         {% endblock %}
     </div>
 
-   
+    <!-- Footer -->
     <footer class="footer mt-auto py-3 bg-dark">
         <div class="container text-center">
-            <span class="text-white">&copy; 2024 HabitTrack. Tous droits réservés.</span>
+            <span class="text-white">&copy; 2024 HabitTrack. Tous droits réservés. Projet etudiant @kf</span>
         </div>
     </footer>
 
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    {# Ajout du bloc extra_js pour les scripts spécifiques à chaque page #}
+    <!-- Liens vers le JS de Bootstrap 5 (via CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>
