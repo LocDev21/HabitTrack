@@ -1,0 +1,366 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tableau de Bord - HabitTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Styles spécifiques au tableau de bord pour un look moderne et sombre */
+    body {
+        background-color: #214264; /* Couleur de fond principale, comme dans base.html */
+        color: #e8eef3;
+    }
+    .weekly-section {
+        background-color: #1f2464; /* Fond de section plus clair pour les blocs hebdomadaires */
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        margin-bottom: 30px;
+    }
+
+    .weekly-section h4 {
+        color: #faf9fa; /* Vert clair pour les titres de semaine */
+        font-weight: 700;
+        margin-bottom: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 10px;
+    }
+
+    .card-habit {
+        background-color: #525653; /* Fond des cartes d'habitude individuelles */
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        color: #e9f5ed;
+        margin-bottom: 20px; /* Espace entre les cartes */
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .card-habit:hover {
+        transform: translateY(-3px); /* Effet au survol */
+    }
+
+    .card-habit .card-header {
+        background-color: #07110a; /* En-tête des cartes d'habitude */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+
+    .card-habit .card-body {
+        padding: 20px;
+    }
+
+    .card-habit .btn-outline-light {
+        color: #e9f5ed;
+        border-color: #e9f5ed;
+    }
+
+    .card-habit .btn-outline-light:hover {
+        background-color: #600ad8;
+        color: #2b0be1;
+    }
+
+    .card-habit .btn-outline-danger {
+        color: #ffcccc;
+        border-color: #ffcccc;
+    }
+
+    .card-habit .btn-outline-danger:hover {
+        background-color: #d90303;
+        color: #e30918;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 200px; /* Hauteur fixe pour les graphiques */
+        width: 100%;
+        margin-top: 15px;
+    }
+
+    /* Styles pour les badges */
+    .badge-item {
+        background-color: #011608; /* Couleur de fond pour chaque badge */
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        height: 100%; /* Pour aligner les éléments en hauteur */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .badge-icon {
+        width: 60px; /* Taille des icônes de badge */
+        height: 60px;
+        object-fit: contain; /* Pour que l'image s'adapte sans être déformée */
+        margin-bottom: 5px;
+    }
+
+    .badge-item p {
+        font-weight: 600;
+        color: #e9f5ed;
+        margin-bottom: 0;
+    }
+
+    .badge-item small {
+        color: #d4edda;
+        font-size: 0.85em;
+    }
+
+    .form-check-input:checked {
+        background-color: #28a745; /* Vert pour la case cochée */
+        border-color: #28a745;
+    }
+
+    .form-check-input:focus {
+        box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+    }
+
+    .alert {
+        margin-top: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-8">
+            <h2 class="mb-4">Vos habitudes</h2>
+            <div class="mb-4">
+                <a href="{% url 'ajouter_habitude' %}" class="btn btn-success btn-lg">
+                    <i class="fas fa-plus-circle me-2"></i> Ajouter une nouvelle habitude
+                </a>
+            </div>
+
+            {% if habitudes %}
+                <div id="stats-data">{{ stats|json_script:"stats-data" }}</div>
+                <div class="row">
+                    {% for habitude in habitudes %}
+                        <div class="col-md-6">
+                            <div class="card card-habit">
+                                <div class="card-header">
+                                    <span><strong>{{ habitude.titre }}</strong> <small class="text-white-50">({{ habitude.frequence }})</small></span>
+                                    <div>
+                                        <a href="{% url 'modifier_habitude' habitude.id %}" class="btn btn-sm btn-outline-light me-2" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'supprimer_habitude' habitude.id %}" class="btn btn-sm btn-outline-danger" title="Supprimer" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette habitude ?');">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text text-white-75">{{ habitude.description_habit|default_if_none:"Pas de description." }}</p>
+                                    <hr>
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                            <strong class="text-info">Jours consécutifs :</strong>
+                                            <span id="consecutive-{{ habitude.id }}" class="text-white">0</span>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input check-done-habit" type="checkbox" id="habitDoneSwitch-{{ habitude.id }}"
+                                                data-habit-id="{{ habitude.id }}"
+                                            >
+                                            <label class="form-check-label" for="habitDoneSwitch-{{ habitude.id }}">Fait aujourd'hui</label>
+                                        </div>
+                                    </div>
+                                    <div class="chart-container">
+                                        <canvas id="habitChart-{{ habitude.id }}"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="lead text-center text-white-50">Vous n'avez pas encore d'habitudes. Commencez par en ajouter une !</p>
+            {% endif %}
+        </div>
+
+        {# Section Badges #}
+        <div class="col-lg-4">
+            <div class="weekly-section">
+                <h4 class="text-center">Vos Badges</h4>
+                <div class="row text-center">
+                    {% for badge in badges %}
+                        <div class="col-md-6 mb-3">
+                            <div class="badge-item">
+                                {% if badge.nom_badge == 'Débutant' %}
+                                    <img src="{% static 'images/badge_debutant.jpeg' %}" alt="Badge Débutant" class="img-fluid badge-icon">
+                                {% elif badge.nom_badge == 'Assidu' %}
+                                    <img src="{% static 'images/badge_assidu.png.jpeg' %}" alt="Badge Assidu" class="img-fluid badge-icon">
+                                {% elif badge.nom_badge == 'Champion' %}
+                                    <img src="{% static 'images/badge_champion.png.jpeg' %}" alt="Badge Champion" class="img-fluid badge-icon">
+                                {% else %}
+                                    <i class="fas fa-award fa-3x text-warning"></i>
+                                {% endif %}
+                                <p class="text-white mt-2 mb-0">{{ badge.nom_badge }}</p>
+                                <small class="text-white-50">{{ badge.description_badge }}</small>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="col-12 text-center text-white-50">
+                            <p>Aucun badge obtenu pour le moment.</p>
+                        </div>
+                    {% endfor %}
+                    <div class="col-12 text-center text-white mt-3">
+                        <small>Plus de badges à découvrir en progressant !</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Fonction utilitaire pour obtenir un cookie (nécessaire pour le CSRF token)
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        // Fonction pour créer les graphiques Chart.js
+        function createChart(habitId, labels, data) {
+            const ctx = document.getElementById('habitChart-' + habitId);
+            if (!ctx) { // Vérifie si le canvas existe
+                console.warn(`Canvas element for habitChart-${habitId} not found.`);
+                return;
+            }
+            new Chart(ctx.getContext('2d'), {
+                type: 'bar', // ou 'line' pour un suivi plus fluide
+                data: {
+                    labels: labels, // Jours
+                    datasets: [{
+                        label: 'Jours faits',
+                        data: data, // 1 pour fait, 0 pour non fait
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#e9f5ed'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 1.1, // Pour les barres 0 ou 1
+                            ticks: {
+                                stepSize: 1,
+                                callback: function(value, index, values) {
+                                    return value === 1 ? 'Fait' : (value === 0 ? 'Non Fait' : '');
+                                },
+                                color: '#e9f5ed'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#e9f5ed' // Couleur de la légende
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Récupère les stats JSON du script tag
+            const statsElement = document.getElementById('stats-data');
+            const allStats = statsElement ? JSON.parse(statsElement.textContent) : {};
+            // Génère un tableau d'IDs JS valide
+            const habitIds = [{% for habitude in habitudes %}"{{ habitude.id }}"{% if not forloop.last %},{% endif %}{% endfor %}];
+            habitIds.forEach(function(habitId) {
+                const habitStats = allStats[habitId];
+                if (habitStats) {
+                    createChart(habitId, habitStats.jours, habitStats.donnees);
+                    const consecutiveDaysSpan = document.getElementById('consecutive-' + habitId);
+                    if (consecutiveDaysSpan) {
+                        consecutiveDaysSpan.textContent = habitStats.consecutive_days;
+                    }
+                    // Met à jour la checkbox si besoin
+                    const checkbox = document.getElementById('habitDoneSwitch-' + habitId);
+                    if (checkbox) {
+                        checkbox.checked = !!habitStats.aujourd_hui_fait;
+                    }
+                }
+            });
+
+            // Gestion du toggle "Fait aujourd'hui"
+            const checkboxes = document.querySelectorAll('.check-done-habit');
+            checkboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    const self = this;
+                    self.disabled = true;
+                    const habitId = self.dataset.habitId;
+                    const isCompleted = self.checked;
+                    const url = `/marquer/${habitId}/`;
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken
+                        },
+                        body: JSON.stringify({ 'is_completed': isCompleted })
+                    })
+                    .then(response => {
+                        const contentType = response.headers.get("content-type");
+                        if (contentType && contentType.indexOf("application/json") !== -1) {
+                            return response.json();
+                        } else {
+                            throw new TypeError("Oops, we haven't got JSON!");
+                        }
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('Une erreur est survenue : ' + data.error);
+                            self.checked = !isCompleted;
+                        }
+                    })
+                    .catch(error => {
+                        alert('Une erreur réseau est survenue ou le serveur n\'a pas répondu comme prévu.');
+                        self.checked = !isCompleted;
+                    })
+                    .finally(() => {
+                        self.disabled = false;
+                    });
+                });
+            });
+        });
+    </script>
+{% endblock %}

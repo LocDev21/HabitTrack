@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ article.titre }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .article-detail-container {
+        background-color: #f9faf9; /* Fond du conteneur d'article */
+        padding: 3rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+        margin-bottom: 2rem;
+        color: #e0e7e4; /* Texte clair */
+    }
+    .article-detail-container h1 {
+        color: #0a0b0a; /* Vert clair pour le titre */
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+        text-align: center;
+    }
+    .article-detail-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+        margin-bottom: 2rem;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .article-detail-container p {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #0b0c0b; /* Texte du paragraphe */
+        margin-bottom: 1rem;
+        text-align: justify;
+    }
+    .btn-back-to-blog {
+        margin-top: 2rem;
+        display: block;
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+        background-color: #28a745; /* Vert primaire */
+        border-color: #28a745;
+        color: white;
+    }
+    .btn-back-to-blog:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="article-detail-container">
+        <h1>{{ article.titre }}</h1>
+        <p>{{ article.contenu|linebreaksbr }}</p>
+        <a href="{% url 'blog' %}" class="btn btn-back-to-blog">
+            <i class="fas fa-arrow-left me-2"></i> Retour au blog
+        </a>
+    </div>
+</div>
+{% endblock %}

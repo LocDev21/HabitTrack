@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Ajouter une Habitude - HabitTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        background-color: #020403; /* Vert foncé plus clair pour le conteneur */
+        padding: 3rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto; 
+        color: #0f1412; /* Texte clair */
+    }
+    h2 {
+        margin-bottom: 2rem;
+        text-align: center;
+        color: #f2faf4; /* Vert clair pour le titre */
+    }
+    form p {
+        margin-bottom: 1rem;
+    }
+    form label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #e0e7e4; /* Texte clair pour les labels */
+    }
+    .form-control, .form-select {
+        background-color: #4a6a5a;
+        border: 1px solid #5d826a;
+        color: #f8f9fa;
+    }
+    .form-control::placeholder {
+        color: #c0c0c0;
+    }
+    .form-control:focus, .form-select:focus {
+        background-color: #4a6a5a;
+        border-color: #6edb8c;
+        box-shadow: 0 0 0 0.25rem rgba(110, 219, 140, 0.25);
+        color: #f8f9fa;
+    }
+    .btn-primary {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+    .btn-primary:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+    .btn-secondary {
+        background-color: #295e93; /* Couleur Bootstrap par défaut */
+        border-color: #6c757d;
+    }
+    .btn-secondary:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="form-container">
+        <h2>Ajouter une habitude</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="btn btn-primary">Ajouter l'habitude</button>
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary">Annuler</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

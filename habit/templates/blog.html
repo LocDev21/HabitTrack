@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Blog - HabitTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Adaptez les couleurs pour s'intégrer au nouveau thème sombre */
+    .blog-intro {
+        background-color: #edf4f0; /* Fond du bloc d'intro plus foncé */
+        padding: 3rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+        margin-bottom: 2rem;
+        text-align: center;
+        color: #161817; /* Texte clair */
+    }
+    .blog-intro h1 {
+        color: #090a0a; /* Vert clair pour le titre */
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+    }
+    .blog-intro p {
+        font-size: 1.15rem;
+        line-height: 1.8;
+        color: #080808; /* Texte légèrement plus clair */
+    }
+    .blog-card {
+        border: none;
+        border-radius: 0.75rem;
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
+        transition: transform 0.2s ease-in-out;
+        height: 100%;
+        background-color: #101512; /* Fond des cartes de blog plus foncé */
+        color: #e0e7e4; /* Texte clair */
+    }
+    .blog-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
+    }
+    .blog-card img {
+        border-top-left-radius: 0.75rem;
+        border-top-right-radius: 0.75rem;
+        height: 200px;
+        object-fit: cover;
+    }
+    .blog-card .card-body {
+        padding: 1.5rem;
+    }
+    .blog-card .card-title {
+        color: #eef4ef; /* Vert clair pour les titres d'articles */
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    .blog-card .card-text {
+        color: #e7ecec; /* Texte du corps d'article */
+        margin-bottom: 1.5rem;
+    }
+    .btn-outline-primary {
+        color: #0d5b4a; /* Vert clair pour les boutons */
+        border-color: #6edb8c;
+    }
+    .btn-outline-primary:hover {
+        background-color: #6edb8c;
+        color: #214234; /* Texte vert foncé sur hover */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="blog-intro">
+        <h1>Notre Blog sur les Habitudes</h1>
+        <p>Découvrez des conseils, des astuces et des articles inspirants pour vous aider à construire des habitudes durables et à transformer votre vie. Restez motivé avec HabitTrack !</p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="col">
+            <div class="card blog-card">
+                <img src="{% static 'images/velo2.jpeg' %}" class="card-img-top" alt="Personne faisant du vélo">
+                <div class="card-body">
+                    <h5 class="card-title">Le Cyclisme : Votre Passeport pour l'Énergie et la Sérénité</h5>
+                    <p class="card-text">Découvrez comment le cyclisme régulier peut transformer votre corps et votre esprit, réduisant le stress et augmentant votre bien-être. Suivez vos progrès avec HabitTrack.</p>
+                    <a href="{% url 'blog_detail' slug='cyclisme-energie-serenite' %}" class="btn btn-outline-primary">Lire la suite <i class="fas fa-arrow-right ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card blog-card">
+                <img src="{% static 'images/fruits.jpeg' %}" class="card-img-top" alt="Assiette de fruits et légumes">
+                <div class="card-body">
+                    <h5 class="card-title">Alimentation Saine : Le Carburant de Votre Productivité</h5>
+                    <p class="card-text">Apprenez comment une nutrition équilibrée est essentielle pour maintenir un niveau d'énergie élevé et optimiser vos performances quotidiennes. Suivez vos habitudes alimentaires.</p>
+                    <a href="{% url 'blog_detail' slug='alimentation-saine-booster-productivite' %}" class="btn btn-outline-primary">Lire la suite <i class="fas fa-arrow-right ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card blog-card">
+                <img src="{% static 'images/evasion.jpg' %}" class="card-img-top" alt="Paysage naturel avec arbres">
+                <div class="card-body">
+                    <h5 class="card-title">S'évader dans la Nature : Recharger Votre Esprit et Améliorer Votre Concentration</h5>
+                    <p class="card-text">Plonger au cœur de la nature, même pour une courte promenade, réduit le stress et améliore le bien-être général. Fais de cette connexion essentielle une habitude et observe l'impact positif sur ta productivité et ton humeur, avec le suivi simplifié de HabitTrack.</p>
+                    <a href="{% url 'blog_detail' slug='evader-nature-recharge-esprit' %}" class="btn btn-outline-primary">Lire la suite <i class="fas fa-arrow-right ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card blog-card">
+                <img src="{% static 'images/yoga2.jpeg' %}" class="card-img-top" alt="Personne faisant du yoga">
+                <div class="card-body">
+                    <h5 class="card-title">Yoga et Méditation : Ancrer la Pleine Conscience dans Votre Journée</h5>
+                    <p class="card-text">Le yoga et la méditation sont des pratiques puissantes pour équilibrer le corps et l'esprit. Instaurer ces habitudes peut améliorer votre concentration, réduire l'anxiété et renforcer votre discipline. Suivez vos progrès et restez motivé avec les outils de HabitTrack.</p>
+                    <a href="{% url 'blog_detail' slug='yoga-meditation-pleine-conscience' %}" class="btn btn-outline-primary">Lire la suite <i class="fas fa-arrow-right ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

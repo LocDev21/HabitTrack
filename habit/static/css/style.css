@@ -1,0 +1,109 @@
+/* static/css/style.css */
+
+body {
+    background-color: #1f553e; /* Couleur de fond principale tirée de votre image verte foncée */
+    color: #f3f7f5; /* Couleur de texte par défaut pour les éléments clairs sur fond foncé */
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /* Police moderne */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1; /* Permet au contenu principal de prendre l'espace disponible */
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #020504 !important; /* Une nuance encore plus foncée pour la navbar */
+    border-bottom: 1px solid rgba(247, 243, 243, 0.05);
+}
+.navbar-brand {
+    font-weight: 700;
+    color: #d4edda !important;
+}
+.navbar-nav .nav-link {
+    color: #f0f5f2 !important;
+    transition: color 0.2s ease-in-out;
+}
+.navbar-nav .nav-link:hover, .navbar-nav .nav-link.active {
+    color: #fff !important;
+}
+.navbar-text {
+    color: #e7eee9 !important;
+}
+
+/* Boutons globaux */
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.btn-outline-light {
+    color: #d4edda;
+    border-color: #d4edda;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.btn-outline-light:hover {
+    background-color: #d4edda;
+    color: #214234;
+}
+
+/* Messages Django (alertes) */
+.alert {
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+}
+.alert-success { background-color: #13f447; color: #155724; border-color: #c3e6cb; }
+.alert-info { background-color: #15d1f3; color: #0c5460; border-color: #bee5eb; }
+.alert-warning { background-color: #f1b708; color: #856404; border-color: #ffeeba; }
+.alert-danger { background-color: #f80c20; color: #721c24; border-color: #f5c6cb; }
+
+/* Pied de page */
+.footer {
+    background-color: #010706 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    color: #090d0a;
+}
+
+/* Liens génériques */
+a {
+    color: #6edb8c; /* Vert clair pour les liens */
+    text-decoration: none;
+}
+a:hover {
+    color: #8cde9c;
+    text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    .main-content {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    .col-lg-8, .col-lg-4 {
+        width: 100%; /* S'assurer que les colonnes prennent toute la largeur sur mobile */
+    }
+    .weekly-section, .sidebar-section, .trees-planted-section {
+        padding: 15px;
+    }
+    .weekly-section h4 {
+        font-size: 1.25rem;
+    }
+    .badge-item i {
+        font-size: 2.5em;
+    }
+    .tree-item img {
+        width: 40px;
+        height: 40px;
+    }
+}
