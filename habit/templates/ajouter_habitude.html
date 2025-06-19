@@ -4,8 +4,11 @@
 
 {% block extra_css %}
 <style>
+     body{
+        background-color: #214264;
+    }
     .form-container {
-        background-color: #020403; /* Vert foncé plus clair pour le conteneur */
+        background-color: #0101019a; 
         padding: 3rem;
         border-radius: 0.5rem;
         box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
@@ -62,7 +65,8 @@
 {% endblock %}
 
 {% block content %}
-    <div class="form-container">
+<body>
+        <div class="form-container">
         <h2>Ajouter une habitude</h2>
         <form method="post">
             {% csrf_token %}
@@ -73,4 +77,6 @@
             </div>
         </form>
     </div>
+
+</body>
 {% endblock %}

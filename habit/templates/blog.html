@@ -5,6 +5,9 @@
 
 {% block extra_css %}
 <style>
+    body{
+        background-color: #214264;
+    }
     /* Adaptez les couleurs pour s'intégrer au nouveau thème sombre */
     .blog-intro {
         background-color: #edf4f0; /* Fond du bloc d'intro plus foncé */
@@ -68,7 +71,8 @@
 {% endblock %}
 
 {% block content %}
-<div class="container py-4">
+<body>
+    <div class="container py-4">
     <div class="blog-intro">
         <h1>Notre Blog sur les Habitudes</h1>
         <p>Découvrez des conseils, des astuces et des articles inspirants pour vous aider à construire des habitudes durables et à transformer votre vie. Restez motivé avec HabitTrack !</p>
@@ -120,4 +124,6 @@
         </div>
     </div>
 </div>
+
+</body>
 {% endblock %}
